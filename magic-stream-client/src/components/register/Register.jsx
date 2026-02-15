@@ -151,8 +151,8 @@ const Register = () => {
                             value={favouriteGenres.map(g => String(g.genre_id))}
                             onChange={handleGenreChange}
                         >
-                            {genres.map(genre => (
-                                <option key={genre.genre_id} value={genre.genre_id} label={genre.genre_name}>
+                            {Array.isArray(genres) && genres.map(genre => (
+                                <option key={genre.genre_id} value={genre.genre_id}>
                                     {genre.genre_name}
                                 </option>
                             ))}

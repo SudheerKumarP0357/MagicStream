@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GavinLonDigital/MagicStream/Server/MagicStreamServer/database"
-	"github.com/GavinLonDigital/MagicStream/Server/MagicStreamServer/routes"
+	"github.com/SudheerKumarP0357/MagicStream/magic-stream-server/database"
+	"github.com/SudheerKumarP0357/MagicStream/magic-stream-server/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
