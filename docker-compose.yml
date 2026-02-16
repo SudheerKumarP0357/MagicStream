@@ -1,8 +1,9 @@
 services:
   frontend:
-    build:
-      context: ./magic-stream-client
-      dockerfile: Dockerfile
+    image: sudheer0357/magic-stream:frontend.latest
+    # build:
+    #   context: ./magic-stream-client
+    #   dockerfile: Dockerfile
     ports:
       - "${FRONTEND_SERVER_PORT:-8000}:80"
     environment:
@@ -13,9 +14,10 @@ services:
       - backend
 
   backend:
-    build:
-      context: ./magic-stream-server
-      dockerfile: Dockerfile
+    image: sudheer0357/magic-stream:backend.latest
+    # build:
+    #   context: ./magic-stream-server
+    #   dockerfile: Dockerfile
     ports:
       - "${BACKEND_API_PORT:-8080}:8080"
     environment:
@@ -24,7 +26,7 @@ services:
       DATABASE_NAME: "${MONGO_DATABASE_NAME}"
       OPENAI_API_KEY: "${OPENAI_API_KEY}"
       BASE_PROMPT_TEMPLATE: "Return a response using one of the words rankings"
-      RECOMMENDED_MOVIE_LIMIT: 10
+      RECOMMENDED_MOVIE_LIMIT: 5
       SECRET_KEY: "${SECRET_KEY}"
       SECRET_REFRESH_KEY: "${SECRET_REFRESH_KEY}"
     networks:
@@ -33,7 +35,7 @@ services:
       - mongodb
 
   mongodb:
-    image: mongo:8.2-noble
+    image: sudheer0357/magic-stream:mongodb.latest
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_DB_USERNAME}"
@@ -41,7 +43,7 @@ services:
       MONGO_INITDB_DATABASE: "${MONGO_DATABASE_NAME}"
     volumes:
       - mongodb_data:/data/db
-      - ./init-db:/docker-entrypoint-initdb.d:ro
+      # - ./mongo-db/init-db:/docker-entrypoint-initdb.d:ro
     networks:
       - magic-stream
 

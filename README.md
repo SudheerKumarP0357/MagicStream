@@ -44,3 +44,9 @@ It also demonstrates how **MongoDB** can serve as a reliable, scalable database 
    cd MagicStream
 
 2. Nothing
+
+docker run --name backend -d -p 8080:8080 -e ALLOWED_ORIGINS=http://localhost:8000 -e MONGODB_URI=mongodb://root:password@host.docker.internal:27017 -e DATABASE_NAME=magic-stream-movies -e OPENAI_API_KEY=179RevaWlyQkWlpki8A -e RECOMMENDED_MOVIE_LIMIT=5 -e SECRET_KEY=your_secret_key -e SECRET_REFRESH_KEY=your_refresh_secret_key magic-stream/backend
+
+docker run --name frontend -d -p 8000:80 -e API_URL=http://localhost:8080 magic-stream/frontend
+
+docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=password  magic-stream/mongodb
