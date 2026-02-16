@@ -1,0 +1,60 @@
+services:
+  frontend:
+    # image: magic-stream/frontend
+    build:
+      context: ./magic-stream-client
+      dockerfile: Dockerfile
+
+    ports:
+      - 8000:80
+
+    environment:
+      VITE_API_BASE_URL: "http://localhost:8080"
+
+    networks:
+      - magic-stream
+
+    depends_on:
+      - backend
+  
+  backend:
+    # image: magic-stream/backend
+    build:
+      context: ./magic-stream-server
+      dockerfile: Dockerfile
+    
+    ports:
+      - 8080:8080
+    
+    environment:
+      ALLOWED_ORIGINS: "http://localhost:8000"
+      MONGODB_URI: "mongodb://root:password@mongodb:27017"
+      DATABASE_NAME: "magic-stream-movies"
+      OPENAI_API_KEY: ""
+      BASE_PROMPT_TEMPLATE: "Return  a response using  one of the words rankings"
+      RECOMMENDED_MOVIE_LIMIT: 10
+      SECRET_KEY: "your_secret_key"
+      SECRET_REFRESH_KEY: "your_refresh_secret_key"
+    
+    networks:
+      - magic-stream
+
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:8.2-noble
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: magic-stream-movies
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    networks:
+    - magic-stream
+volumes:
+  mongodb_data:
+networks:
+  magic-stream:

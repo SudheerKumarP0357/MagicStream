@@ -57,7 +57,8 @@ const Register = () => {
             // Registration successful, redirect to login
             navigate('/login', { replace: true });
         } catch (err) {
-            setError('Registration failed. Please try again.');
+            setError('Registration failed. Please try again.',err);
+            console.log(err)
         } finally {
             setLoading(false);
         }
