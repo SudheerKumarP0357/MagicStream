@@ -1,8 +1,17 @@
 #!/bin/bash
 # seed-data.sh
-
+# docker run -d --name mongodb \
+# -e MONGO_INITDB_ROOT_USERNAME=root \
+# -e MONGO_INITDB_ROOT_PASSWORD=password \
+# -e MONGO_INITDB_DATABASE=magic-stream-movies \
+# -p 27017:27017 \
+# -v ./init-db:/docker-entrypoint-initdb.d:ro \
+# mongo:8.2-noble
 echo "--- Importing JSON data ---"
 
+# MONGO_INITDB_ROOT_USERNAME="root"
+# MONGO_INITDB_ROOT_PASSWORD="password"
+# MONGO_INITDB_DATABASE="magic-stream-movies"
 # We authenticate against 'admin' but import into '$MONGO_INITDB_DATABASE'
 # Note the added ?authSource=admin at the end of the URI
 COMMON_URI="mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@localhost:27017/?authSource=admin"

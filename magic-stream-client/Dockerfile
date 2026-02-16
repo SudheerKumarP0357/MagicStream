@@ -1,23 +1,22 @@
-FROM node:lts AS build
+FROM node:24-alpine AS build
 
 # Set working directory
 WORKDIR /app
 
-# 
-COPY package.json /app/package.json
-COPY package-lock.json /app/package-lock.json
+COPY package*.json ./
 
 # Same as npm install
 RUN npm ci
 
-COPY . /app
+COPY . .
 
 RUN npm run build
 
 # 2. For Nginx setup
 FROM nginx:alpine
 
-ENV VITE_API_BASE_URL=""
+# Install envsubst (gettext package)
+RUN apk add --no-cache gettext
 
 WORKDIR /usr/share/nginx/html
 
@@ -27,5 +26,13 @@ RUN rm -rf ./*
 # Copy static assets from builder stage
 COPY --from=build /app/dist/ .
 
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# Copy nginx config (optional, if you need custom config)
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy and set permissions for entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

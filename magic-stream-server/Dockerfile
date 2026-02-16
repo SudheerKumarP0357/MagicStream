@@ -12,10 +12,6 @@ RUN --mount=type=cache,target=/go/pkg/mod/cache \
     --mount=type=cache,target=/go-build \
     CGO_ENABLED=0 GOOS=linux go build -o main main.go
 
-FROM scratch AS production
-
-COPY --from=builder /app/main /main
-
 EXPOSE 8080
 
-CMD ["/main"]
+CMD ["./main"]

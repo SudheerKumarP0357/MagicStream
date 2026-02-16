@@ -1,44 +1,34 @@
 services:
   frontend:
-    # image: magic-stream/frontend
     build:
       context: ./magic-stream-client
       dockerfile: Dockerfile
-
     ports:
-      - 8000:80
-
+      - "${FRONTEND_SERVER_PORT:-8000}:80"
     environment:
-      VITE_API_BASE_URL: "http://localhost:8080"
-
+      API_URL: "http://${BACKEND_API_SERVER:-localhost}:${BACKEND_API_PORT:-8080}"
     networks:
       - magic-stream
-
     depends_on:
       - backend
-  
+
   backend:
-    # image: magic-stream/backend
     build:
       context: ./magic-stream-server
       dockerfile: Dockerfile
-    
     ports:
-      - 8080:8080
-    
+      - "${BACKEND_API_PORT:-8080}:8080"
     environment:
-      ALLOWED_ORIGINS: "http://localhost:8000"
-      MONGODB_URI: "mongodb://root:password@mongodb:27017"
-      DATABASE_NAME: "magic-stream-movies"
-      OPENAI_API_KEY: ""
-      BASE_PROMPT_TEMPLATE: "Return  a response using  one of the words rankings"
+      ALLOWED_ORIGINS: "http://${FRONTEND_SERVER:-localhost}:${FRONTEND_SERVER_PORT:-8000}"
+      MONGODB_URI: "mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@mongodb:27017"
+      DATABASE_NAME: "${MONGO_DATABASE_NAME}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+      BASE_PROMPT_TEMPLATE: "Return a response using one of the words rankings"
       RECOMMENDED_MOVIE_LIMIT: 10
-      SECRET_KEY: "your_secret_key"
-      SECRET_REFRESH_KEY: "your_refresh_secret_key"
-    
+      SECRET_KEY: "${SECRET_KEY}"
+      SECRET_REFRESH_KEY: "${SECRET_REFRESH_KEY}"
     networks:
       - magic-stream
-
     depends_on:
       - mongodb
 
@@ -46,15 +36,17 @@ services:
     image: mongo:8.2-noble
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: magic-stream-movies
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_DB_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_DB_PASSWORD}"
+      MONGO_INITDB_DATABASE: "${MONGO_DATABASE_NAME}"
     volumes:
       - mongodb_data:/data/db
       - ./init-db:/docker-entrypoint-initdb.d:ro
     networks:
-    - magic-stream
+      - magic-stream
+
 volumes:
   mongodb_data:
+
 networks:
   magic-stream:
